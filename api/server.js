@@ -44,16 +44,28 @@ router.get('/', (req, res) => {
 // ----------------------------------------------
 
 router.post('/upload', async (req, res) => {
-  if (!req.body.message) {
-    console.log(req.body);
+  if (!req.body) {
     return res.status(400).json({ error: 'Missing message body' });
   }
-  return new Promise(async () => {await arweave.createTransaction({
-      data: JSON.stringify(req.body.message)
-  }, centralWallet).then((tx) => {
-    console.log(tx);
-    return res.status(201).json(tx);
-  })});
+
+  return new Promise(async () => {
+    await arweave.createTransaction({data: req.body.message}, centralWallet).then(async (tx) => 
+    {
+      tx.addTag('App-Name', 'caw')
+      tx.addTag('Content-Type', 'text/plain')
+      tx.addTag('Version', '0.8')
+      tx.addTag('Type', req.body.isRepost ? 'repost' : 'post');
+      tx.addTag('UID', req.body.uid);
+      if(req.body.topicValue) {
+        tx.addTag('Topic', req.body.topicValue);
+      }
+      await arweave.transactions.sign(tx, centralWallet).then(async () => 
+      {
+        await arweave.transactions.post(tx);
+        return res.status(201).json(tx);
+      })
+    })
+  });
 })
 
 // ***************************************************************************
