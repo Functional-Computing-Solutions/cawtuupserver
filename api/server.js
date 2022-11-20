@@ -61,8 +61,13 @@ router.post('/upload', async (req, res) => {
       }
       await arweave.transactions.sign(tx, centralWallet).then(async () => 
       {
-        await arweave.transactions.post(tx);
-        return res.status(201).json(tx);
+        let uploader = await arweave.transactions.getUploader(tx);
+
+        while (!uploader.isComplete) {
+          await uploader.uploadChunk();
+          console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`);
+        }
+        return tx;
       })
     })
   });
