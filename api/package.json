@@ -1,7 +1,7 @@
 {
-  "name": "bank-api",
+  "name": "caw-arweave-api",
   "version": "1.0.0",
-  "description": "Bank API",
+  "description": "caw-arweave-api",
   "private": true,
   "main": "server.js",
   "scripts": {
@@ -20,9 +20,12 @@
     "prettier": "^2.0.5"
   },
   "dependencies": {
+    "arweave": "^1.11.6",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "express-promise-router": "^4.1.1",
+    "promise": "^8.3.0"
   },
   "engines": {
     "node": ">=10"
